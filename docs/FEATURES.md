@@ -16,8 +16,8 @@ chronologically; this file holds current state.
 | Test harness | ✅ | — |
 | Retro++ engine adoption | ✅ | — (submodule at `594774c`; consumer only) |
 | Logging | ✅ | — (spdlog used directly; no wrapper) |
-| Asset acquisition | ⬜ | [`features/asset-acquisition.md`](features/asset-acquisition.md) |
-| ROM extraction (graphics, sound driver, levels) | ⬜ | [`features/asset-acquisition.md`](features/asset-acquisition.md) |
+| Asset acquisition | ⬜ | [`features/asset-acquisition.md`](features/asset-acquisition.md) — four families: graphics, levels, sound driver, text |
+| ROM extraction (graphics, levels, sound driver, text) | ⬜ | [`features/asset-acquisition.md`](features/asset-acquisition.md) |
 | Continuous integration | ⬜ | `features/ci.md` |
 | Distributable build | ⬜ | `features/distributable-build.md` |
 
@@ -27,16 +27,19 @@ Constant tables derived from the ROM (compiled in) and content extracted from it
 
 | Feature | Status | Doc |
 |---|---|---|
-| Core enums (enemy kinds, game states, sound IDs) | ⬜ | — |
+| Core enums and encodings | ⬜ | — |
 | Character map | ⬜ | — |
-| Tile graphics (four worlds, common, menu) | ⬜ | — |
-| Level data (twelve levels, column format) | ⬜ | — |
-| Enemy placement tables | ⬜ | — |
-| Music and sound-effect data | ⬜ | — |
-| Physics and timing constants | ⬜ | — |
-| Scoring tables | ⬜ | — |
-
-Rows are added as the data audit enumerates the corpus.
+| Physics and animation constants | ⬜ | — |
+| Level meta tables | ⬜ | — |
+| Enemy tables | ⬜ | — |
+| Enemy behaviour scripts | ⬜ | — |
+| Sprite compositions | ⬜ | — |
+| Tile graphics (extracted) | ⬜ | — |
+| Level files (extracted) | ⬜ | — |
+| Sound driver span (extracted) | ⬜ | — |
+| Demo recordings | ⬜ | — |
+| HUD and screen layouts | ⬜ | — |
+| Text (extracted) | ⬜ | — |
 
 ## State
 

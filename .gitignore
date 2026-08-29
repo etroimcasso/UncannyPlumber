@@ -88,6 +88,8 @@ assets/audio/default/*
 !assets/audio/default/.gitkeep
 assets/levels/default/*
 !assets/levels/default/.gitkeep
+assets/text/default/*
+!assets/text/default/.gitkeep
 
 # ROM safety net — never commit a ROM under any circumstance
 *.gb

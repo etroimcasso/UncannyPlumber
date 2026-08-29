@@ -117,6 +117,11 @@ audit and during porting; every addition lands in the same session as its discov
 |---|---|
 | Divider-register randomness may be degenerate | The disassembly notes at one site that because the music code is linked to the timer interrupt, the divider register "might always be 1" when read. Whether that is so is a property of the original's timing, and the port reproduces it by reading the divider from the VM rather than deciding. |
 | Timer interrupt overlaps the serial vector | The timer handler's code runs into the serial-interrupt vector mid-instruction. Serial is unused, so nothing observes it; preserved as an equivalence. |
+| Demo recorder present but unreachable | A routine records the player's inputs as a demo when a flag holds a value nothing in the game ever writes. Preserved as dead-but-present code, the way Kirpich carries its own recorder. |
+| Genkotsu's fist ends the level | Touching the Genkotsu fist tile from the side runs the level-complete path rather than injuring Mario. Preserved. |
+| Tile reads are doubled | The original reads a background tile twice and combines the reads to survive a display-timing hazard. The port has no such hazard; a single read is the equivalence. |
+| Start-up clears memory that is not there | Initialisation wipes the cartridge-RAM address range on a cartridge with no RAM, over-runs the object-attribute and high-RAM clears by a byte, copies the sprite-transfer routine two bytes long, and copies Mario's initial entity image one byte long. Every one is harmless on hardware; each is preserved as an equivalence with its reachability argument in the boot contract. |
+| A fifth world's pass-through tiles | The table of tiles Mario can stand on but not bump has five entries for four worlds. The fifth is unreachable; preserved. |
 
 ## 7. Options (user opt-in, off by default)
 
@@ -170,8 +175,8 @@ implementation file.
 | Hardware target | DMG, MBC1 ROM banking (no RAM banking), no SRAM, no RTC, no SGB |
 | Hardware-register variables | **None in port code.** `rLCDC`, `rSCX`, `rSCY`, `rDIV`, `rIE`, `rIF`, `rNR10`–`rNR52` and friends do not exist as variables anywhere under `src/`. Their effects are expressed at engine and renderer level. Registers appear only inside the engine's VM boundary — in a routine's registration, never at a call site. |
 | Audio | Chiptune only. The engine's audio system hosts the ROM's sound driver on its internal VM and produces PCM into the engine mixer. No audio-file replacement backend. |
-| Asset posture | Single canonical path per content family: `assets/gfx/default/`, `assets/audio/default/`, `assets/levels/default/`. No swappable packs, no manifest, no fallback chain. The player's ROM is the sole source of every content family, in every environment — development, CI, and player alike populate by extraction. |
-| Content boundary | Graphics, audio, and **level data** (the twelve levels' column data and enemy placements) are authored expression: extracted at runtime, never committed, never compiled in. Mechanics tables (physics constants, scoring, timers, enemy behavior parameters) are compiled in as `constexpr` data. The boundary is classified once for the whole data layer at the audit, not per table. |
+| Asset posture | Single canonical path per content family: `assets/gfx/default/`, `assets/levels/default/`, `assets/audio/default/`, `assets/text/default/`. No swappable packs, no manifest, no fallback chain. The player's ROM is the sole source of every content family, in every environment — development, CI, and player alike populate by extraction. |
+| Content boundary | Graphics, **level data** (columns, screens, warp pipes, block contents, enemy placements — the start-menu backdrop and the ending hangar included), the sound driver with its music and effects, and **text** are authored expression: extracted at runtime, never committed, never compiled in. Mechanics (physics curves, timers, scoring, enemy behaviour scripts and attribute tables, sprite layouts, tile classes) are compiled in as `constexpr` data. Classified once for the whole data layer (2026-08-28), not per table. |
 | License posture | AGPL-3.0 (`LICENSE` at the repo root), matching the Retro++ engine's open-source license — the whole distributed build is one AGPL combined work. The engine is dual-licensed (AGPL-3.0 / commercial); the upstream disassembly is published without a license. |
 | Repository posture | Standalone repository. The disassembly is a sibling checkout outside the tree; this is not a fork of it. |
 | Public repository | `https://github.com/etroimcasso/UncannyPlumber`, public from its first push. `docs/` and `README.md` are the public face; the private working set is gitignored. |
@@ -183,8 +188,9 @@ own data directory for an installed game, the project tree for a development bui
 committed via `.gitkeep`; their contents are gitignored.
 
 **One route, every environment.** The game's first-start flow asks for the ROM through a native
-file dialog, verifies its size and SHA1, decodes every output in memory, and writes the layout
-atomically through the engine's file store. Developers and CI populate the same way with a ROM of
+file dialog, verifies its size and SHA1, decodes every output in memory — graphics, the fourteen
+level files, the sound driver span, the text strings — and writes the layout atomically through
+the engine's file store. Developers and CI populate the same way with a ROM of
 their own; there is no script that copies content out of the disassembly. A missing ROM is a
 provisioning failure, never a silent skip.
 
